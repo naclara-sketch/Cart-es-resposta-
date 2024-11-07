@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartões de Pergunta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+
+    .cartao-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .cartao {
+      width: 200px;
+      height: 300px;
+      border-radius: 10px;
+      background-color: orange;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+      cursor: pointer;
+      perspective: 1000px;
+    }
+
+    .cartao .frente, .cartao .verso {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .cartao .frente {
+      background-color: orange;
+      color: white;
+      text-align: center;
+    }
+
+    .cartao .verso {
+      background-color: green;
+      color: white;
+      transform: rotateY(180deg);
+      text-align: center;
+    }
+
+    .cartao.flip .frente {
+      transform: rotateY(180deg);
+    }
+
+    .cartao.flip .verso {
+      transform: rotateY(0deg);
+    }
+
+    .input-resposta {
+      width: 80%;
+      padding: 8px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .tente-erro {
+      color: red;
+      font-size: 12px;
+    }
+
+    .cartao:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <div class="cartao-container">
+    <div class="cartao" id="cartao1">
+      <div class="frente">
+        <h2>Quais as cores da bandeira do Brasil?</h2>
+      </div>
+      <div class="verso">
+        <h2>Resposta:</h2>
+        <p>Verde, azul, amarelo e branco</p>
+      </div>
+    </div>
+
+    <div class="cartao" id="cartao2">
+      <div class="frente">
+        <h2>Qual a capital mais populosa do Brasil?</h2>
+      </div>
+      <div class="verso">
+        <h2>Resposta:</h2>
+        <p>São Paulo</p>
+      </div>
+    </div>
+
+    <div class="cartao" id="cartao3">
+      <div class="frente">
+        <h2>Em qual continente o Brasil se localiza?</h2>
+      </div>
+      <div class="verso">
+        <h2>Resposta:</h2>
+        <p>América</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tentativas = [0, 0, 0]; // Guarda as tentativas de cada cartão
+    const respostas = ['verde, azul, amarelo e branco', 'São Paulo', 'América'];
+    const cartoes = document.querySelectorAll('.cartao');
+
+    cartoes.forEach((cartao, index) => {
+      cartao.addEventListener('click', function() {
+        if (cartao.classList.contains('flip')) return; // Se já virou, não faz nada
+        tentativas[index]++;
+
+        // Vira o cartão
+        cartao.classList.add('flip');
+
+        const inputResposta = document.createElement('input');
+        inputResposta.type = 'text';
+        inputResposta.classList.add('input-resposta');
+        cartao.querySelector('.verso').appendChild(inputResposta);
+
+        // Adiciona um evento para verificar a resposta
+        inputResposta.addEventListener('blur', function() {
+          const respostaUsuario = inputResposta.value.trim().toLowerCase();
+          const respostaCorreta = respostas[index].toLowerCase();
+
+          if (respostaUsuario === respostaCorreta) {
+            alert('Você acertou!');
+            cartao.querySelector('.verso').innerHTML = `<h2>Resposta correta: ${respostas[index]}</h2>`;
+          } else {
+            if (tentativas[index] < 2) {
+              alert('Resposta errada! Tente novamente.');
+              cartao.classList.remove('flip');
+              setTimeout(() => {
+                cartao.classList.add('flip');
+              }, 100);
+            } else {
+              alert(`Você errou! A resposta correta é: ${respostas[index]}`);
+              cartao.querySelector('.verso').innerHTML = `<h2>Resposta correta: ${respostas[index]}</h2>`;
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
